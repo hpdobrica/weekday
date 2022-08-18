@@ -1,0 +1,7 @@
+- better error handling
+- explicit logger passed in with log levels (debug/application/request/transaction...)
+- centralized errors, maybe with response codes?
+- DTOs for requests and responses, maybe validation based on dtos with something like runtypes?
+- add helm for security
+- add jsdoc everywhere else
+- unit tests?
