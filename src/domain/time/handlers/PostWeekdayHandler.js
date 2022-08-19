@@ -20,9 +20,9 @@ class PostWeekdayHandler extends BaseHandler {
   * @param {TimeService} timeService
   * @constructor
   */
-  constructor(timeService) {
+  constructor(timeService, loggers) {
     const validator = new RequestValidator(validationSchema)
-    super(validator)
+    super(loggers, validator)
     this.timeService = timeService
   }
 
@@ -36,9 +36,9 @@ class PostWeekdayHandler extends BaseHandler {
   _executeImpl = async (req, res) => {
     try {
       const weekday = this.timeService.getWeekday(req.body.date)
-      this.ok(res, {day: weekday})
+      this.ok(res, req.traceId, {day: weekday})
     } catch(err) {
-      this.fail(res, err)
+      this.fail(res, req.traceId, err)
     }
 
   }

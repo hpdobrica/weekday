@@ -1,6 +1,7 @@
 const express = require("express");
 const RequestValidator = require('./RequestValidator')
 const coreErrors = require('../coreErrors')
+const loggers = require('../loggers')
 
 /**
 * BaseHandler is an abstract class created to allow you to easily implement handlers for various use cases
@@ -9,11 +10,14 @@ const coreErrors = require('../coreErrors')
 class BaseHandler {
 
   validator
+  loggers
 
   /**
+  * @param {map[string]loggers.Logger} [loggers]
   * @param {RequestValidator} [validator]
   */
-  constructor(validator=undefined) {
+  constructor(loggers, validator=undefined) {
+    this.loggers = loggers
     this.validator = validator
 
     // abstract enforcement
@@ -44,7 +48,7 @@ class BaseHandler {
     try {
       await this._executeImpl(req, res)
     } catch(err) {
-      this.fail(res, err)
+      this.fail(res, req.traceId, err)
     }
   }
 
@@ -61,7 +65,7 @@ class BaseHandler {
         this.validator.validate(req)
         return next()
       } catch(err) {
-        this.fail(res, err)
+        this.fail(res, req.traceId, err)
       }
     } else {
       return next()
@@ -72,13 +76,17 @@ class BaseHandler {
   /**
   * ok returns a successful response to a request
   * @param {express.Response} res
-  * @param {object} [dto=undefined]
+  * @param {string} traceId
+  * @param {object} [data=undefined]
   */
-  ok = (res, dto = undefined) => {
-    if(!!dto) {
+  ok = (res, traceId, data = undefined) => {
+    const statusCode = 200
+    if(!!data) {
       res.type('application/json')
-      return res.status(200).json(dto)
+      this.logResponse('info', traceId, statusCode, data)
+      return res.status(200).json(data)
     } else {
+      this.logResponse('info', traceId, statusCode)
       return res.sendStatus(200)
     }
   }
@@ -86,12 +94,23 @@ class BaseHandler {
   /**
   * fail responds to a request with an error
   * @param {Express.Response} res
+  * @param {string} traceId
   * @param {Error|string} error
   */
-  fail = (res, error) => {
-    console.log(error) // todo add logger
-    return res.status(error.statusCode || 500).json({
+  fail = (res, traceId, error) => {
+    const statusCode = error.statusCode || 500
+    const data = {
       message: error.toString()
+    }
+    this.logResponse('error', traceId, statusCode, data)
+    return res.status(statusCode).json(data)
+  }
+
+  logResponse = (level, traceId, statusCode, data = {}) => {
+    this.loggers.request[level]("Response", {
+      statusCode,
+      data,
+      traceId
     })
   }
 }

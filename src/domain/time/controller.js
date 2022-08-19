@@ -1,3 +1,4 @@
+const loggers = require('../../core/loggers')
 const TimeService = require('./TimeService')
 const PostWeekdayHandler = require('./handlers/PostWeekdayHandler')
 
@@ -5,7 +6,7 @@ const PostWeekdayHandler = require('./handlers/PostWeekdayHandler')
 const timeService = new TimeService()
 
 module.exports = {
-  postWeekdayHandler: new PostWeekdayHandler(timeService),
+  postWeekdayHandler: new PostWeekdayHandler(timeService, loggers),
 }
 
 
