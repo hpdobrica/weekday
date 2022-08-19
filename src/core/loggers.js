@@ -12,7 +12,7 @@ const winstonLogger = winston.createLogger({
 });
 
 
-// see https://www.dobrica.sh/notes/Logging
+// not all info logs should have the same retention - see https://www.dobrica.sh/notes/Logging
 const RETENTION_TYPES = {
   TRANSACTION: 'TRANSACTION',
   REQUEST: 'REQUEST',
@@ -35,40 +35,41 @@ class Logger {
   }
 
   debug = (message, metadata = {}) => {
+    const metaOrError = errorReplacer(metadata)
     const log = {
       message,
       retention: this.retention,
-      metadata
+      metadata: metaOrError
     }
     this.logger.debug(log)
   }
 
   info = (message, metadata = {}) => {
-    metadata = errorReplacer(metadata)
+    const metaOrError = errorReplacer(metadata)
     const log = {
       message,
       retention: this.retention,
-      metadata
+      metadata: metaOrError
     }
     this.logger.info(log)
   }
 
   warn = (message, metadata = {}) => {
-    metadata = errorReplacer(metadata)
+    const metaOrError = errorReplacer(metadata)
     const log = {
       message,
       retention: this.retention,
-      metadata
+      metadata: metaOrError
     }
     this.logger.warn(log)
   }
 
   error = (message, metadata = {}) => { 
-    metadata = errorReplacer(metadata)
+    const metaOrError = errorReplacer(metadata)
     const log = {
       message,
       retention: this.retention,
-      metadata
+      metadata: metaOrError
     }
     this.logger.error(log)
   }
@@ -78,7 +79,7 @@ class Logger {
 
 
 module.exports = {
-  Logger: Logger,
+  Logger: Logger, // exported for jsdoc
   transaction: new Logger(winstonLogger, RETENTION_TYPES.TRANSACTION),
   request: new Logger(winstonLogger, RETENTION_TYPES.REQUEST),
   application: new Logger(winstonLogger, RETENTION_TYPES.APPLICATION),
