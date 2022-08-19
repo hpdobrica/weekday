@@ -106,6 +106,12 @@ class BaseHandler {
     return res.status(statusCode).json(data)
   }
 
+  /**
+  * logs the response for a request
+  * @param {Express.Response} res
+  * @param {string} traceId
+  * @param {Error|string} error
+  */
   logResponse = (level, traceId, statusCode, data = {}) => {
     this.loggers.request[level]("Response", {
       statusCode,

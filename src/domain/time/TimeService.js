@@ -1,5 +1,6 @@
 const IsoDate = require('./IsoDate')
 
+// home of time business logic
 class TimeService {
   /**
   * getWeekday returns the name of the day in the week for a specified date

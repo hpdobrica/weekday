@@ -1,3 +1,2 @@
-- add jsdoc everywhere else
 - unit tests?
-- timezone dependence?
+- readme

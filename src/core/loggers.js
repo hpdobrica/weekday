@@ -20,7 +20,7 @@ const RETENTION_TYPES = {
   TMP: 'TMP'
 }
 
-
+// extracts details from error for logging - otherwise {} is called since error properties are non-enumerable
 const errorReplacer = (metadata) => {
     if (metadata instanceof Error) {
       return { message: metadata.message, stack: metadata.stack };
