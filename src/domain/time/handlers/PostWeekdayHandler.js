@@ -1,16 +1,28 @@
 const express = require('express')
+const Joi = require('joi').extend(require('@joi/date'));
 const BaseHandler = require('../../../shared/http/BaseHandler')
+const RequestValidator = require('../../../shared/http/RequestValidator')
 const TimeService = require('../TimeService')
+
+
+const validationSchema = {
+  body: Joi.object().keys({
+    date: Joi.date().format('YYYY-MM-DD').required(),
+  }),
+}
+
 
 class PostWeekdayHandler extends BaseHandler {
   timeService
+
 
   /**
   * @param {TimeService} timeService
   * @constructor
   */
   constructor(timeService) {
-    super()
+    const validator = new RequestValidator(validationSchema)
+    super(validator)
     this.timeService = timeService
   }
 
@@ -21,7 +33,7 @@ class PostWeekdayHandler extends BaseHandler {
   * @protected
   * @abstract
   */
-  _executeImpl(req, res) {
+  _executeImpl = async (req, res) => {
     try {
       this.timeService.validateIsoDate(req.body.date)
       const weekday = this.timeService.getWeekday(req.body.date)
@@ -31,6 +43,7 @@ class PostWeekdayHandler extends BaseHandler {
     }
 
   }
+
 }
 
 module.exports = PostWeekdayHandler

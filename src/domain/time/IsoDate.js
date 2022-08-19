@@ -1,14 +1,4 @@
-
-// Sunday needs to be first day as per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
-const DAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-]
+const Joi = require('joi');
 
 class IsoDate {
   #dateObj
@@ -19,26 +9,16 @@ class IsoDate {
     this.#dateObj = new Date(isoString)
   }
 
-  getWeekday() {
-    return DAY_NAMES[this.#dateObj.getDay()]
+  getWeekday(locale = 'en-US') {
+    // avoids hardcoding [Sunday, Monday, Tuesday...] and allows for flexible locale
+    return Intl.DateTimeFormat(locale, {weekday:'long'}).format(this.#dateObj)
   }
 
   static isValidIsoDateFormat(isoString) {
-    const pattern = /\d\d\d\d-\d\d-\d\d/
+    const schema = Joi.date().iso()
+    const {error} = schema.validate(isoString)
 
-    // check if format is yyyy-mm-dd, but allow any-number-of-digits for year
-    if(!pattern.test(isoString)) {
-      return false
-    }
-
-    const parsedDate = Date.parse(isoString)
-
-    // confirm that provided date is actually valid date, to avoid 2022/12/32
-    if(isNaN(parsedDate)) {
-      return false
-    }
-
-    return true
+    return !error
   }
 
 }

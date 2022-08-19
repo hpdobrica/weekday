@@ -4,6 +4,6 @@ const timeController = require('../domain/time/controller')
 
 const WeekdayRouter = Router()
 
-WeekdayRouter.post('/', (req, res) => timeController.postWeekdayHandler.execute(req, res))
+WeekdayRouter.post('/',timeController.postWeekdayHandler.validate, timeController.postWeekdayHandler.execute)
 
 module.exports = WeekdayRouter
