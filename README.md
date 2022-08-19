@@ -57,3 +57,10 @@ curl --request POST 'localhost:3000/weekday' \
 ```
 
 
+## Unit tests
+
+Unit tests are written in jest and can be run with
+
+```
+npm run jest
+```
