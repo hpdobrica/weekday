@@ -1,6 +1,6 @@
 const {Router} = require("express");
 
-const timeController = require('../domain/time/controller')
+const timeController = require('../../domain/time/controller')
 
 const WeekdayRouter = Router()
 

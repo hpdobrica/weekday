@@ -1,5 +1,3 @@
-- add helm for security
 - add jsdoc everywhere else
 - unit tests?
 - timezone dependence?
-- extract middlewares into a separate dir
