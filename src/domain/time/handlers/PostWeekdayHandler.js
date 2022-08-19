@@ -1,7 +1,7 @@
 const express = require('express')
 const Joi = require('joi').extend(require('@joi/date'));
-const BaseHandler = require('../../../shared/http/BaseHandler')
-const RequestValidator = require('../../../shared/http/RequestValidator')
+const BaseHandler = require('../../../core/http/BaseHandler')
+const RequestValidator = require('../../../core/http/RequestValidator')
 const TimeService = require('../TimeService')
 
 
@@ -35,7 +35,6 @@ class PostWeekdayHandler extends BaseHandler {
   */
   _executeImpl = async (req, res) => {
     try {
-      this.timeService.validateIsoDate(req.body.date)
       const weekday = this.timeService.getWeekday(req.body.date)
       this.ok(res, {day: weekday})
     } catch(err) {

@@ -1,10 +1,11 @@
 const Joi = require('joi');
+const domainErrors = require('./domainErrors')
 
 class IsoDate {
   #dateObj
   constructor(isoString) {
     if(!IsoDate.isValidIsoDateFormat(isoString)) {
-      throw new Error('INVALID_ISO_DATE_FORMAT')
+      throw new domainErrors.IsoDateFormatError(isoString)
     }
     this.#dateObj = new Date(isoString)
   }

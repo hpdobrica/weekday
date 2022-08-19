@@ -5,7 +5,7 @@ const PostWeekdayHandler = require('./handlers/PostWeekdayHandler')
 const timeService = new TimeService()
 
 module.exports = {
-  postWeekdayHandler: new PostWeekdayHandler(timeService)
+  postWeekdayHandler: new PostWeekdayHandler(timeService),
 }
 
 

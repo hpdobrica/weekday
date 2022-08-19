@@ -1,5 +1,6 @@
 const express = require("express");
 const RequestValidator = require('./RequestValidator')
+const coreErrors = require('../coreErrors')
 
 /**
 * BaseHandler is an abstract class created to allow you to easily implement handlers for various use cases
@@ -17,7 +18,7 @@ class BaseHandler {
 
     // abstract enforcement
     if (this.constructor === BaseHandler) {
-      throw new Error("Abstract class BaseHandler should not be instantiated directly!");
+      throw new coreErrors.AbstractClassInstantiationError()
     }
   }
 
@@ -31,7 +32,7 @@ class BaseHandler {
   * @abstract
   */
   _executeImpl = async (req, res) => {
-    throw new Error("Abstract method _executeImpl needs to be overriden!")
+    throw new coreErrors.AbstractMethodInvocationError()
   }
 
   /**
@@ -41,9 +42,8 @@ class BaseHandler {
   */
   execute = async (req, res) => {
     try {
-      this._executeImpl(req, res)
+      await this._executeImpl(req, res)
     } catch(err) {
-      console.log('BaseHandler error', err)
       this.fail(res, err)
     }
   }
@@ -57,7 +57,12 @@ class BaseHandler {
   */
   validate = (req, res, next) => {
     if(this.validator) {
-      return this.validator.validate(req, res, next)
+      try {
+        this.validator.validate(req)
+        return next()
+      } catch(err) {
+        this.fail(res, err)
+      }
     } else {
       return next()
     }
@@ -85,7 +90,7 @@ class BaseHandler {
   */
   fail = (res, error) => {
     console.log(error) // todo add logger
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.toString()
     })
   }

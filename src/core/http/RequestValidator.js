@@ -1,5 +1,6 @@
 const express = require('express')
 const Joi = require('joi')
+const httpErrors = require('./httpErrors')
 
 class RequestValidator {
   joiSchemas
@@ -27,12 +28,11 @@ class RequestValidator {
   }
 
   /**
-  * 
+  * takes an express request and validates it based on provided schemas (this.joiSchemas)
+  * throws an error if request object is not compliant
   * @param {express.Request} req
-  * @param {express.Response} res
-  * @param {Function} res
   */
-  validate = (req, res, next) => {
+  validate = (req) => {
     for (const segmentName in this.joiSchemas) {
       const schema = this.joiSchemas[segmentName]
       const reqSegment = req[segmentName]
@@ -48,15 +48,11 @@ class RequestValidator {
       }
 
       if(errors.some(err => !!err)) {
-        return res.status(400).json({
-          error: "VALIDATION_ERROR",
-          details: errors.filter(err => err !== null)
-        })
+        throw new httpErrors.ValidationError(errors.filter(err => err !== null))
       } else{
         continue
       }
     }
-    next()
   }
 }
 
